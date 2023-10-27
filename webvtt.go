@@ -361,7 +361,7 @@ func parseTextWebVTT(i string) (o Line) {
 
 // formatDurationWebVTT formats a .vtt duration
 func formatDurationWebVTT(i time.Duration) string {
-	return formatDuration(i, ".", 3)
+	return formatDuration(i, ".", 3, true)
 }
 
 // WriteToWebVTT writes subtitles in .vtt format

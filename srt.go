@@ -119,7 +119,7 @@ func ReadFromSRT(i io.Reader) (o *Subtitles, err error) {
 
 // formatDurationSRT formats an .srt duration
 func formatDurationSRT(i time.Duration) string {
-	return formatDuration(i, ",", 3)
+	return formatDuration(i, ",", 3, true)
 }
 
 // WriteToSRT writes subtitles in .srt format

@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/adrianlungu/go-astisub"
 	"github.com/asticode/go-astikit"
-	"github.com/asticode/go-astisub"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
 )

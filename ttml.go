@@ -585,7 +585,7 @@ type TTMLOutDuration time.Duration
 
 // MarshalText implements the TextMarshaler interface
 func (t TTMLOutDuration) MarshalText() ([]byte, error) {
-	return []byte(formatDuration(time.Duration(t), ".", 3)), nil
+	return []byte(formatDuration(time.Duration(t), ".", 3, true)), nil
 }
 
 // WriteToTTML writes subtitles in .ttml format

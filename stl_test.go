@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/adrianlungu/go-astisub"
 	"github.com/asticode/go-astikit"
-	"github.com/asticode/go-astisub"
 	"github.com/stretchr/testify/assert"
 )
 

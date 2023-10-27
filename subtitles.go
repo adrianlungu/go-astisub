@@ -697,13 +697,13 @@ func parseDuration(i, millisecondSep string, numberOfMillisecondDigits int) (o t
 }
 
 // formatDuration formats a duration
-func formatDuration(i time.Duration, millisecondSep string, numberOfMillisecondDigits int) (s string) {
+func formatDuration(i time.Duration, millisecondSep string, numberOfMillisecondDigits int, formatHour bool) (s string) {
 	// Parse hours
 	var hours = int(i / time.Hour)
 	var n = i % time.Hour
-	/*if hours < 10 {
+	if hours < 10 && formatHour {
 		s += "0"
-	}*/
+	}
 	s += strconv.Itoa(hours) + ":"
 
 	// Parse minutes

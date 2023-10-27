@@ -1214,7 +1214,7 @@ func (e ssaEvent) updateFormat(formatMap map[string]bool, format []string) []str
 
 // formatDurationSSA formats an .ssa duration
 func formatDurationSSA(i time.Duration) string {
-	return formatDuration(i, ".", 2)
+	return formatDuration(i, ".", 2, false)
 }
 
 // string returns the block as a string
