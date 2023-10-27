@@ -14,9 +14,38 @@ import (
 	"github.com/asticode/go-astikit"
 )
 
-// https://www.matroska.org/technical/specs/subtitles/ssa.html
+// https://wiki.videolan.org/SubStation_Alpha/
 // http://moodub.free.fr/video/ass-specs.doc
 // https://en.wikipedia.org/wiki/SubStation_Alpha
+
+type SSAStyleAttributes struct {
+	SSAAlignment       *int
+	SSAAlphaLevel      *float64
+	SSAAngle           *float64 // degrees
+	SSABackColour      *Color
+	SSABold            *bool
+	SSABorderStyle     *int
+	SSAEffect          string
+	SSAEncoding        *int
+	SSAFontName        string
+	SSAFontSize        *float64
+	SSAItalic          *bool
+	SSALayer           *int
+	SSAMarginLeft      *int // pixels
+	SSAMarginRight     *int // pixels
+	SSAMarginVertical  *int // pixels
+	SSAMarked          *bool
+	SSAOutline         *float64 // pixels
+	SSAOutlineColour   *Color
+	SSAPrimaryColour   *Color
+	SSAScaleX          *float64 // %
+	SSAScaleY          *float64 // %
+	SSASecondaryColour *Color
+	SSAShadow          *float64 // pixels
+	SSASpacing         *float64 // pixels
+	SSAStrikeout       *bool
+	SSAUnderline       *bool
+}
 
 // SSA alignment
 const (
@@ -50,46 +79,54 @@ const (
 	ssaEventCategorySound    = "Sound"
 )
 
-// SSA event format names
+// SSA event format names as per https://github.com/libass/libass/blob/e64390522d9501a2c7e6a51c31a5b2a1f3a35cd1/fuzz/ass.dict#L97
 const (
-	ssaEventFormatNameEffect  = "Effect"
-	ssaEventFormatNameEnd     = "End"
 	ssaEventFormatNameLayer   = "Layer"
+	ssaEventFormatNameMarked  = "Marked"
+	ssaEventFormatNameText    = "Text"
+	ssaEventFormatNameStart   = "Start"
+	ssaEventFormatNameEnd     = "End"
+	ssaEventFormatNameActor   = "Actor"
+	ssaEventFormatNameEffect  = "Effect"
 	ssaEventFormatNameMarginL = "MarginL"
 	ssaEventFormatNameMarginR = "MarginR"
 	ssaEventFormatNameMarginV = "MarginV"
-	ssaEventFormatNameMarked  = "Marked"
 	ssaEventFormatNameName    = "Name"
-	ssaEventFormatNameStart   = "Start"
 	ssaEventFormatNameStyle   = "Style"
-	ssaEventFormatNameText    = "Text"
 )
 
-// SSA script info names
+// SSA script info names as per https://github.com/libass/libass/blob/e64390522d9501a2c7e6a51c31a5b2a1f3a35cd1/fuzz/ass.dict#L38C10-L38C10
 const (
-	ssaScriptInfoNameCollisions          = "Collisions"
-	ssaScriptInfoNameOriginalEditing     = "Original Editing"
-	ssaScriptInfoNameOriginalScript      = "Original Script"
-	ssaScriptInfoNameOriginalTiming      = "Original Timing"
-	ssaScriptInfoNameOriginalTranslation = "Original Translation"
-	ssaScriptInfoNamePlayDepth           = "PlayDepth"
-	ssaScriptInfoNamePlayResX            = "PlayResX"
-	ssaScriptInfoNamePlayResY            = "PlayResY"
-	ssaScriptInfoNameScriptType          = "ScriptType"
-	ssaScriptInfoNameScriptUpdatedBy     = "Script Updated By"
-	ssaScriptInfoNameSynchPoint          = "Synch Point"
-	ssaScriptInfoNameTimer               = "Timer"
-	ssaScriptInfoNameTitle               = "Title"
-	ssaScriptInfoNameUpdateDetails       = "Update Details"
-	ssaScriptInfoNameWrapStyle           = "WrapStyle"
+	ssaScriptInfoNameScriptType            = "ScriptType"
+	ssaScriptInfoNamePlayResX              = "PlayResX"
+	ssaScriptInfoNamePlayResY              = "PlayResY"
+	ssaScriptInfoNameTimer                 = "Timer"
+	ssaScriptInfoNameWrapStyle             = "WrapStyle"
+	ssaScriptInfoNameScaledBorderAndShadow = "ScaledBorderAndShadow"
+	ssaScriptInfoNameYCbCrMatrix           = "YCbCr Matrix"
+	ssaScriptInfoNameKerning               = "Kerning"
+	ssaScriptInfoNameLanguage              = "Language"
+	ssaScriptInfoNameCollisions            = "Collisions"
+	ssaScriptInfoNameOriginalEditing       = "Original Editing"
+	ssaScriptInfoNameOriginalScript        = "Original Script"
+	ssaScriptInfoNameOriginalTiming        = "Original Timing"
+	ssaScriptInfoNameOriginalTranslation   = "Original Translation"
+	ssaScriptInfoNamePlayDepth             = "PlayDepth"
+	ssaScriptInfoNameScriptUpdatedBy       = "Script Updated By"
+	ssaScriptInfoNameSynchPoint            = "Synch Point"
+	ssaScriptInfoNameTitle                 = "Title"
+	ssaScriptInfoNameUpdateDetails         = "Update Details"
 )
 
-// SSA section names
+// SSA section names as per https://github.com/libass/libass/blob/e64390522d9501a2c7e6a51c31a5b2a1f3a35cd1/fuzz/ass.dict#L30
 const (
-	ssaSectionNameEvents     = "events"
-	ssaSectionNameScriptInfo = "script.info"
-	ssaSectionNameStyles     = "styles"
-	ssaSectionNameUnknown    = "unknown"
+	ssaSectionNameEvents           = "[Events]"
+	ssaSectionNameScriptInfo       = "[Script Info]"
+	ssaSectionNameFonts            = "[Fonts]"
+	ssaSectionNameStylesV4         = "[V4 Styles]"
+	ssaSectionNameStylesV4Plus     = "[V4+ Styles]"
+	ssaSectionNameStylesV4PlusPlus = "[V4++ Styles]"
+	ssaSectionNameUnknown          = "Unknown"
 )
 
 // SSA style format names
@@ -168,16 +205,16 @@ func ReadFromSSAWithOptions(i io.Reader, opts SSAOptions) (o *Subtitles, err err
 
 		// Section name
 		if strings.HasPrefix(line, "[") && strings.HasSuffix(line, "]") {
-			switch strings.ToLower(line[1 : len(line)-1]) {
-			case "events":
+			switch line {
+			case ssaSectionNameEvents:
 				sectionName = ssaSectionNameEvents
 				format = make(map[int]string)
 				continue
-			case "script info":
+			case ssaSectionNameScriptInfo:
 				sectionName = ssaSectionNameScriptInfo
 				continue
-			case "v4 styles", "v4+ styles", "v4 styles+":
-				sectionName = ssaSectionNameStyles
+			case ssaSectionNameStylesV4, ssaSectionNameStylesV4Plus, ssaSectionNameStylesV4PlusPlus, "v4 styles+":
+				sectionName = ssaSectionNameStylesV4
 				format = make(map[int]string)
 				continue
 			default:
@@ -218,7 +255,7 @@ func ReadFromSSAWithOptions(i io.Reader, opts SSAOptions) (o *Subtitles, err err
 				err = fmt.Errorf("astisub: parsing script info block failed: %w", err)
 				return
 			}
-		case ssaSectionNameEvents, ssaSectionNameStyles:
+		case ssaSectionNameEvents, ssaSectionNameStylesV4:
 			// Parse format
 			if header == "Format" {
 				for idx, item := range strings.Split(content, ",") {
@@ -240,7 +277,7 @@ func ReadFromSSAWithOptions(i io.Reader, opts SSAOptions) (o *Subtitles, err err
 						return
 					}
 					es = append(es, e)
-				case ssaSectionNameStyles:
+				case ssaSectionNameStylesV4:
 					var s *ssaStyle
 					if s, err = newSSAStyleFromString(content, format); err != nil {
 						err = fmt.Errorf("astisub: building new ssa style failed: %w", err)
@@ -302,21 +339,25 @@ func newSSAColorFromColor(i *Color) string {
 
 // ssaScriptInfo represents an SSA script info block
 type ssaScriptInfo struct {
-	collisions          string
-	comments            []string
-	originalEditing     string
-	originalScript      string
-	originalTiming      string
-	originalTranslation string
-	playDepth           *int
-	playResX, playResY  *int
-	scriptType          string
-	scriptUpdatedBy     string
-	synchPoint          string
-	timer               *float64
-	title               string
-	updateDetails       string
-	wrapStyle           string
+	collisions            string
+	comments              []string
+	originalEditing       string
+	originalScript        string
+	originalTiming        string
+	originalTranslation   string
+	playDepth             *int
+	playResX, playResY    *int
+	scriptType            string
+	scriptUpdatedBy       string
+	synchPoint            string
+	timer                 *float64
+	title                 string
+	updateDetails         string
+	wrapStyle             string
+	kerning               string
+	scaledBorderAndShadow string
+	yCbCrMatrix           string
+	language              string
 }
 
 // newSSAScriptInfo builds an SSA script info block based on metadata
@@ -371,6 +412,14 @@ func (b *ssaScriptInfo) parse(header, content string) (err error) {
 		b.updateDetails = content
 	case ssaScriptInfoNameWrapStyle:
 		b.wrapStyle = content
+	case ssaScriptInfoNameScaledBorderAndShadow:
+		b.scaledBorderAndShadow = content
+	case ssaScriptInfoNameYCbCrMatrix:
+		b.yCbCrMatrix = content
+	case ssaScriptInfoNameKerning:
+		b.kerning = content
+	case ssaScriptInfoNameLanguage:
+		b.language = content
 	// Int
 	case ssaScriptInfoNamePlayResX, ssaScriptInfoNamePlayResY, ssaScriptInfoNamePlayDepth:
 		var v int
@@ -469,6 +518,18 @@ func (b *ssaScriptInfo) bytes() (o []byte) {
 	}
 	if len(b.wrapStyle) > 0 {
 		o = appendStringToBytesWithNewLine(o, ssaScriptInfoNameWrapStyle+": "+b.wrapStyle)
+	}
+	if len(b.scaledBorderAndShadow) > 0 {
+		o = appendStringToBytesWithNewLine(o, ssaScriptInfoNameScaledBorderAndShadow+": "+b.scaledBorderAndShadow)
+	}
+	if len(b.yCbCrMatrix) > 0 {
+		o = appendStringToBytesWithNewLine(o, ssaScriptInfoNameYCbCrMatrix+": "+b.yCbCrMatrix)
+	}
+	if len(b.kerning) > 0 {
+		o = appendStringToBytesWithNewLine(o, ssaScriptInfoNameKerning+": "+b.kerning)
+	}
+	if len(b.language) > 0 {
+		o = appendStringToBytesWithNewLine(o, ssaScriptInfoNameLanguage+": "+b.language)
 	}
 	return
 }
@@ -667,7 +728,7 @@ func ssaUpdateFormat(n string, formatMap map[string]bool, format []string) []str
 	return format
 }
 
-// updateFormat updates the format based on the non empty fields
+// updateFormat updates the format based on the non-empty fields
 func (s ssaStyle) updateFormat(formatMap map[string]bool, format []string) []string {
 	if s.alignment != nil {
 		format = ssaUpdateFormat(ssaStyleFormatNameAlignment, formatMap, format)
@@ -853,29 +914,31 @@ func (s ssaStyle) style() (o *Style) {
 	o = &Style{
 		ID: s.name,
 		InlineStyle: &StyleAttributes{
-			SSAAlignment:       s.alignment,
-			SSAAlphaLevel:      s.alphaLevel,
-			SSAAngle:           s.angle,
-			SSABackColour:      s.backColour,
-			SSABold:            s.bold,
-			SSABorderStyle:     s.borderStyle,
-			SSAEncoding:        s.encoding,
-			SSAFontName:        s.fontName,
-			SSAFontSize:        s.fontSize,
-			SSAItalic:          s.italic,
-			SSAOutline:         s.outline,
-			SSAOutlineColour:   s.outlineColour,
-			SSAMarginLeft:      s.marginLeft,
-			SSAMarginRight:     s.marginRight,
-			SSAMarginVertical:  s.marginVertical,
-			SSAPrimaryColour:   s.primaryColour,
-			SSAScaleX:          s.scaleX,
-			SSAScaleY:          s.scaleY,
-			SSASecondaryColour: s.secondaryColour,
-			SSAShadow:          s.shadow,
-			SSASpacing:         s.spacing,
-			SSAStrikeout:       s.strikeout,
-			SSAUnderline:       s.underline,
+			SSAStyleAttributes: SSAStyleAttributes{
+				SSAAlignment:       s.alignment,
+				SSAAlphaLevel:      s.alphaLevel,
+				SSAAngle:           s.angle,
+				SSABackColour:      s.backColour,
+				SSABold:            s.bold,
+				SSABorderStyle:     s.borderStyle,
+				SSAEncoding:        s.encoding,
+				SSAFontName:        s.fontName,
+				SSAFontSize:        s.fontSize,
+				SSAItalic:          s.italic,
+				SSAOutline:         s.outline,
+				SSAOutlineColour:   s.outlineColour,
+				SSAMarginLeft:      s.marginLeft,
+				SSAMarginRight:     s.marginRight,
+				SSAMarginVertical:  s.marginVertical,
+				SSAPrimaryColour:   s.primaryColour,
+				SSAScaleX:          s.scaleX,
+				SSAScaleY:          s.scaleY,
+				SSASecondaryColour: s.secondaryColour,
+				SSAShadow:          s.shadow,
+				SSASpacing:         s.spacing,
+				SSAStrikeout:       s.strikeout,
+				SSAUnderline:       s.underline,
+			},
 		},
 	}
 	o.InlineStyle.propagateSSAAttributes()
@@ -896,6 +959,7 @@ type ssaEvent struct {
 	start          time.Duration
 	style          string
 	text           string
+	actor          string
 }
 
 // newSSAEventFromItem returns an SSA Event based on an input item
@@ -1009,12 +1073,14 @@ func newSSAEventFromString(header, content string, format map[int]string) (e *ss
 				e.marginVertical = astikit.IntPtr(i)
 			}
 		// String
-		case ssaEventFormatNameEffect, ssaEventFormatNameName, ssaEventFormatNameStyle, ssaEventFormatNameText:
+		case ssaEventFormatNameEffect, ssaEventFormatNameName, ssaEventFormatNameStyle, ssaEventFormatNameText, ssaEventFormatNameActor:
 			switch attr {
 			case ssaEventFormatNameEffect:
 				e.effect = item
 			case ssaEventFormatNameName:
 				e.name = item
+			case ssaEventFormatNameActor:
+				e.actor = item
 			case ssaEventFormatNameStyle:
 				// *Default is reserved
 				// http://www.tcax.org/docs/ass-specs.htm
@@ -1044,12 +1110,14 @@ func (e *ssaEvent) item(styles map[string]*Style) (i *Item, err error) {
 	i = &Item{
 		EndAt: e.end,
 		InlineStyle: &StyleAttributes{
-			SSAEffect:         e.effect,
-			SSALayer:          e.layer,
-			SSAMarginLeft:     e.marginLeft,
-			SSAMarginRight:    e.marginRight,
-			SSAMarginVertical: e.marginVertical,
-			SSAMarked:         e.marked,
+			SSAStyleAttributes: SSAStyleAttributes{
+				SSAEffect:         e.effect,
+				SSALayer:          e.layer,
+				SSAMarginLeft:     e.marginLeft,
+				SSAMarginRight:    e.marginRight,
+				SSAMarginVertical: e.marginVertical,
+				SSAMarked:         e.marked,
+			},
 		},
 		StartAt: e.start,
 	}
@@ -1085,7 +1153,13 @@ func (e *ssaEvent) item(styles map[string]*Style) (i *Item, err error) {
 					l.Items = append(l.Items, LineItem{Text: s[previousEffectEndOffset:idxs[0]]})
 				}
 				previousEffectEndOffset = idxs[1]
-				lineItem = &LineItem{InlineStyle: &StyleAttributes{SSAEffect: s[idxs[0]:idxs[1]]}}
+				lineItem = &LineItem{
+					InlineStyle: &StyleAttributes{
+						SSAStyleAttributes: SSAStyleAttributes{
+							SSAEffect: s[idxs[0]:idxs[1]],
+						},
+					},
+				}
 			}
 			lineItem.Text = s[previousEffectEndOffset:]
 			l.Items = append(l.Items, *lineItem)
@@ -1099,13 +1173,22 @@ func (e *ssaEvent) item(styles map[string]*Style) (i *Item, err error) {
 	return
 }
 
-// updateFormat updates the format based on the non empty fields
+// updateFormat updates the format based on the non-empty fields
 func (e ssaEvent) updateFormat(formatMap map[string]bool, format []string) []string {
-	if len(e.effect) > 0 {
-		format = ssaUpdateFormat(ssaEventFormatNameEffect, formatMap, format)
-	}
 	if e.layer != nil {
 		format = ssaUpdateFormat(ssaEventFormatNameLayer, formatMap, format)
+	}
+	if e.start.Microseconds() > 0 {
+		format = ssaUpdateFormat(ssaEventFormatNameStart, formatMap, format)
+	}
+	if e.end.Microseconds() > 0 {
+		format = ssaUpdateFormat(ssaEventFormatNameEnd, formatMap, format)
+	}
+	if len(e.style) > 0 {
+		format = ssaUpdateFormat(ssaEventFormatNameStyle, formatMap, format)
+	}
+	if len(e.name) > 0 {
+		format = ssaUpdateFormat(ssaEventFormatNameName, formatMap, format)
 	}
 	if e.marginLeft != nil {
 		format = ssaUpdateFormat(ssaEventFormatNameMarginL, formatMap, format)
@@ -1116,15 +1199,16 @@ func (e ssaEvent) updateFormat(formatMap map[string]bool, format []string) []str
 	if e.marginVertical != nil {
 		format = ssaUpdateFormat(ssaEventFormatNameMarginV, formatMap, format)
 	}
+	if len(e.effect) > 0 {
+		format = ssaUpdateFormat(ssaEventFormatNameEffect, formatMap, format)
+	}
+	if len(e.actor) > 0 {
+		format = ssaUpdateFormat(ssaEventFormatNameActor, formatMap, format)
+	}
 	if e.marked != nil {
 		format = ssaUpdateFormat(ssaEventFormatNameMarked, formatMap, format)
 	}
-	if len(e.name) > 0 {
-		format = ssaUpdateFormat(ssaEventFormatNameName, formatMap, format)
-	}
-	if len(e.style) > 0 {
-		format = ssaUpdateFormat(ssaEventFormatNameStyle, formatMap, format)
-	}
+
 	return format
 }
 
@@ -1175,10 +1259,12 @@ func (e *ssaEvent) string(format []string) string {
 				v = strconv.Itoa(*i)
 			}
 		// String
-		case ssaEventFormatNameEffect, ssaEventFormatNameName, ssaEventFormatNameStyle, ssaEventFormatNameText:
+		case ssaEventFormatNameEffect, ssaEventFormatNameName, ssaEventFormatNameStyle, ssaEventFormatNameText, ssaEventFormatNameActor:
 			switch attr {
 			case ssaEventFormatNameEffect:
 				v = e.effect
+			case ssaEventFormatNameActor:
+				v = e.actor
 			case ssaEventFormatNameName:
 				v = e.name
 			case ssaEventFormatNameStyle:
@@ -1254,10 +1340,7 @@ func (s Subtitles) WriteToSSA(o io.Writer) (err error) {
 
 		// Format
 		var formatMap = make(map[string]bool)
-		var format = []string{
-			ssaEventFormatNameStart,
-			ssaEventFormatNameEnd,
-		}
+		var format []string
 		var events []*ssaEvent
 		for _, i := range s.Items {
 			var e = newSSAEventFromItem(*i)

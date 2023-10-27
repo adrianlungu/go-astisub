@@ -2,11 +2,12 @@ package astisub_test
 
 import (
 	"bytes"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astisub"
+	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -78,13 +79,13 @@ func TestSSA(t *testing.T) {
 	assert.Equal(t, &astisub.Metadata{Comments: []string{"Comment 1", "Comment 2"}, SSACollisions: "Normal", SSAOriginalScript: "asticode", SSAPlayDepth: astikit.IntPtr(0), SSAPlayResY: astikit.IntPtr(600), SSAScriptType: "v4.00", SSAScriptUpdatedBy: "version 2.8.01", SSATimer: astikit.Float64Ptr(100), Title: "SSA test"}, s.Metadata)
 	// Styles
 	assert.Equal(t, 3, len(s.Styles))
-	assertSSAStyle(t, astisub.Style{ID: "1", InlineStyle: &astisub.StyleAttributes{SSAAlignment: astikit.IntPtr(7), SSAAlphaLevel: astikit.Float64Ptr(0.1), SSABackColour: &astisub.Color{Alpha: 128, Red: 8}, SSABold: astikit.BoolPtr(true), SSABorderStyle: astikit.IntPtr(7), SSAFontName: "f1", SSAFontSize: astikit.Float64Ptr(4), SSAOutline: astikit.Float64Ptr(1), SSAOutlineColour: &astisub.Color{Green: 255, Red: 255}, SSAMarginLeft: astikit.IntPtr(1), SSAMarginRight: astikit.IntPtr(4), SSAMarginVertical: astikit.IntPtr(7), SSAPrimaryColour: &astisub.Color{Green: 255, Red: 255}, SSASecondaryColour: &astisub.Color{Green: 255, Red: 255}, SSAShadow: astikit.Float64Ptr(4)}}, *s.Styles["1"])
-	assertSSAStyle(t, astisub.Style{ID: "2", InlineStyle: &astisub.StyleAttributes{SSAAlignment: astikit.IntPtr(8), SSAAlphaLevel: astikit.Float64Ptr(0.2), SSABackColour: &astisub.Color{Blue: 15, Green: 15, Red: 15}, SSABold: astikit.BoolPtr(true), SSABorderStyle: astikit.IntPtr(8), SSAEncoding: astikit.IntPtr(1), SSAFontName: "f2", SSAFontSize: astikit.Float64Ptr(5), SSAOutline: astikit.Float64Ptr(2), SSAOutlineColour: &astisub.Color{Green: 255, Red: 255}, SSAMarginLeft: astikit.IntPtr(2), SSAMarginRight: astikit.IntPtr(5), SSAMarginVertical: astikit.IntPtr(8), SSAPrimaryColour: &astisub.Color{Blue: 239, Green: 239, Red: 239}, SSASecondaryColour: &astisub.Color{Green: 255, Red: 255}, SSAShadow: astikit.Float64Ptr(5)}}, *s.Styles["2"])
-	assertSSAStyle(t, astisub.Style{ID: "3", InlineStyle: &astisub.StyleAttributes{SSAAlignment: astikit.IntPtr(9), SSAAlphaLevel: astikit.Float64Ptr(0.3), SSABackColour: &astisub.Color{Red: 8}, SSABorderStyle: astikit.IntPtr(9), SSAEncoding: astikit.IntPtr(2), SSAFontName: "f3", SSAFontSize: astikit.Float64Ptr(6), SSAOutline: astikit.Float64Ptr(3), SSAOutlineColour: &astisub.Color{Red: 8}, SSAMarginLeft: astikit.IntPtr(3), SSAMarginRight: astikit.IntPtr(6), SSAMarginVertical: astikit.IntPtr(9), SSAPrimaryColour: &astisub.Color{Blue: 180, Green: 252, Red: 252}, SSASecondaryColour: &astisub.Color{Blue: 180, Green: 252, Red: 252}, SSAShadow: astikit.Float64Ptr(6)}}, *s.Styles["3"])
+	assertSSAStyle(t, astisub.Style{ID: "1", InlineStyle: &astisub.StyleAttributes{SSAStyleAttributes: astisub.SSAStyleAttributes{SSAAlignment: astikit.IntPtr(7), SSAAlphaLevel: astikit.Float64Ptr(0.1), SSABackColour: &astisub.Color{Alpha: 128, Red: 8}, SSABold: astikit.BoolPtr(true), SSABorderStyle: astikit.IntPtr(7), SSAFontName: "f1", SSAFontSize: astikit.Float64Ptr(4), SSAOutline: astikit.Float64Ptr(1), SSAOutlineColour: &astisub.Color{Green: 255, Red: 255}, SSAMarginLeft: astikit.IntPtr(1), SSAMarginRight: astikit.IntPtr(4), SSAMarginVertical: astikit.IntPtr(7), SSAPrimaryColour: &astisub.Color{Green: 255, Red: 255}, SSASecondaryColour: &astisub.Color{Green: 255, Red: 255}, SSAShadow: astikit.Float64Ptr(4)}}}, *s.Styles["1"])
+	assertSSAStyle(t, astisub.Style{ID: "2", InlineStyle: &astisub.StyleAttributes{SSAStyleAttributes: astisub.SSAStyleAttributes{SSAAlignment: astikit.IntPtr(8), SSAAlphaLevel: astikit.Float64Ptr(0.2), SSABackColour: &astisub.Color{Blue: 15, Green: 15, Red: 15}, SSABold: astikit.BoolPtr(true), SSABorderStyle: astikit.IntPtr(8), SSAEncoding: astikit.IntPtr(1), SSAFontName: "f2", SSAFontSize: astikit.Float64Ptr(5), SSAOutline: astikit.Float64Ptr(2), SSAOutlineColour: &astisub.Color{Green: 255, Red: 255}, SSAMarginLeft: astikit.IntPtr(2), SSAMarginRight: astikit.IntPtr(5), SSAMarginVertical: astikit.IntPtr(8), SSAPrimaryColour: &astisub.Color{Blue: 239, Green: 239, Red: 239}, SSASecondaryColour: &astisub.Color{Green: 255, Red: 255}, SSAShadow: astikit.Float64Ptr(5)}}}, *s.Styles["2"])
+	assertSSAStyle(t, astisub.Style{ID: "3", InlineStyle: &astisub.StyleAttributes{SSAStyleAttributes: astisub.SSAStyleAttributes{SSAAlignment: astikit.IntPtr(9), SSAAlphaLevel: astikit.Float64Ptr(0.3), SSABackColour: &astisub.Color{Red: 8}, SSABorderStyle: astikit.IntPtr(9), SSAEncoding: astikit.IntPtr(2), SSAFontName: "f3", SSAFontSize: astikit.Float64Ptr(6), SSAOutline: astikit.Float64Ptr(3), SSAOutlineColour: &astisub.Color{Red: 8}, SSAMarginLeft: astikit.IntPtr(3), SSAMarginRight: astikit.IntPtr(6), SSAMarginVertical: astikit.IntPtr(9), SSAPrimaryColour: &astisub.Color{Blue: 180, Green: 252, Red: 252}, SSASecondaryColour: &astisub.Color{Blue: 180, Green: 252, Red: 252}, SSAShadow: astikit.Float64Ptr(6)}}}, *s.Styles["3"])
 	// Items
-	assertSSAStyleAttributes(t, astisub.StyleAttributes{SSAEffect: "test", SSAMarked: astikit.BoolPtr(false), SSAMarginLeft: astikit.IntPtr(1234), SSAMarginRight: astikit.IntPtr(2345), SSAMarginVertical: astikit.IntPtr(3456)}, *s.Items[0].InlineStyle)
+	assertSSAStyleAttributes(t, astisub.StyleAttributes{SSAStyleAttributes: astisub.SSAStyleAttributes{SSAEffect: "test", SSAMarked: astikit.BoolPtr(false), SSAMarginLeft: astikit.IntPtr(1234), SSAMarginRight: astikit.IntPtr(2345), SSAMarginVertical: astikit.IntPtr(3456)}}, *s.Items[0].InlineStyle)
 	assert.Equal(t, s.Styles["1"], s.Items[0].Style)
-	assert.Equal(t, []astisub.Line{{Items: []astisub.LineItem{{InlineStyle: &astisub.StyleAttributes{SSAEffect: "{\\pos(400,570)}"}, Text: "(deep rumbling)"}}, VoiceName: "Cher"}}, s.Items[0].Lines)
+	assert.Equal(t, []astisub.Line{{Items: []astisub.LineItem{{InlineStyle: &astisub.StyleAttributes{SSAStyleAttributes: astisub.SSAStyleAttributes{SSAEffect: "{\\pos(400,570)}"}}, Text: "(deep rumbling)"}}, VoiceName: "Cher"}}, s.Items[0].Lines)
 	assert.Equal(t, s.Styles["2"], s.Items[1].Style)
 	assert.Equal(t, s.Styles["3"], s.Items[2].Style)
 	assert.Equal(t, s.Styles["1"], s.Items[3].Style)
@@ -97,7 +98,7 @@ func TestSSA(t *testing.T) {
 	assert.EqualError(t, err, astisub.ErrNoSubtitlesToWrite.Error())
 
 	// Write
-	c, err := ioutil.ReadFile("./testdata/example-out.ssa")
+	c, err := os.ReadFile("./testdata/example-out.ssa")
 	assert.NoError(t, err)
 	err = s.WriteToSSA(w)
 	assert.NoError(t, err)
@@ -112,7 +113,35 @@ Dialogue: Marked=0,0:01:39.00,0:01:41.04,,Cher,1234,2345,3456,test,First item{\p
 	assert.Len(t, s.Items[0].Lines[0].Items, 2)
 	assert.Equal(t, astisub.LineItem{Text: "First item"}, s.Items[0].Lines[0].Items[0])
 	assert.Equal(t, astisub.LineItem{
-		InlineStyle: &astisub.StyleAttributes{SSAEffect: "{\\pos(400,570)}"},
-		Text:        "Second item",
+		InlineStyle: &astisub.StyleAttributes{
+			SSAStyleAttributes: astisub.SSAStyleAttributes{
+				SSAEffect: "{\\pos(400,570)}",
+			},
+		},
+		Text: "Second item",
 	}, s.Items[0].Lines[0].Items[1])
+}
+
+func TestSSAReadWrite(t *testing.T) {
+	input := `[Script Info]
+
+[V4 Styles]
+Format: Name, Alignment, Angle, BackColour, Bold, BorderStyle, Encoding, Fontname, Fontsize, Italic, MarginL, MarginR, MarginV, Outline, OutlineColour, PrimaryColour, ScaleX, ScaleY, SecondaryColour, Shadow, Spacing, Underline
+Style: substyle,2,0.000,&H00000000,0,1,1,Tahoma,30.000,0,8,8,15,2.000,&H00000000,&H00ffffff,100.000,100.000,&H00000000,0.000,0.000,0
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:17.87,0:00:18.44,substyle,Name,0,0,0,Karaoke;,Item
+`
+
+	s, err := astisub.ReadFromSSA(bytes.NewReader([]byte(input)))
+	assert.NoError(t, err)
+
+	var buf bytes.Buffer
+	err = s.WriteToSSA(&buf)
+	assert.NoError(t, err)
+
+	output := buf.String()
+
+	assert.True(t, cmp.Equal(input, output), cmp.Diff(input, output))
 }

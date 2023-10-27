@@ -15,6 +15,15 @@ import (
 	"github.com/asticode/go-astits"
 )
 
+type TeletextStyleAttributes struct {
+	TeletextColor        *Color
+	TeletextDoubleHeight *bool
+	TeletextDoubleSize   *bool
+	TeletextDoubleWidth  *bool
+	TeletextSpacesAfter  *int
+	TeletextSpacesBefore *int
+}
+
 // Errors
 var (
 	ErrNoValidTeletextPID = errors.New("astisub: no valid teletext PID")

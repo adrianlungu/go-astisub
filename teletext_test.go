@@ -34,8 +34,8 @@ func TestTeletextPageParse(t *testing.T) {
 	assert.Equal(t, []*Item{{
 		EndAt: 10 * time.Second,
 		Lines: []Line{
-			{Items: []LineItem{{InlineStyle: &StyleAttributes{TeletextSpacesAfter: astikit.IntPtr(0), TeletextSpacesBefore: astikit.IntPtr(0)}, Text: "test1"}}},
-			{Items: []LineItem{{InlineStyle: &StyleAttributes{TeletextSpacesAfter: astikit.IntPtr(0), TeletextSpacesBefore: astikit.IntPtr(0)}, Text: "test2"}}},
+			{Items: []LineItem{{InlineStyle: &StyleAttributes{TeletextStyleAttributes: TeletextStyleAttributes{TeletextSpacesAfter: astikit.IntPtr(0), TeletextSpacesBefore: astikit.IntPtr(0)}}, Text: "test1"}}},
+			{Items: []LineItem{{InlineStyle: &StyleAttributes{TeletextStyleAttributes: TeletextStyleAttributes{TeletextSpacesAfter: astikit.IntPtr(0), TeletextSpacesBefore: astikit.IntPtr(0)}}, Text: "test2"}}},
 		},
 		StartAt: 5 * time.Second,
 	}}, s.Items)
@@ -76,85 +76,133 @@ func TestParseTeletextRow(t *testing.T) {
 	assert.Equal(t, 1, len(i.Lines))
 	assert.Equal(t, []LineItem{
 		{Text: "black", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorBlack,
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#000000"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorBlack,
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#000000"),
+			},
 		}},
 		{Text: "red", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorRed,
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#ff0000"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorRed,
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#ff0000"),
+			},
 		}},
 		{Text: "green", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorGreen,
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#008000"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorGreen,
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#008000"),
+			},
 		}},
 		{Text: "yellow", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorYellow,
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#ffff00"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorYellow,
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#ffff00"),
+			},
 		}},
 		{Text: "blue", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorBlue,
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#0000ff"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorBlue,
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#0000ff"),
+			},
 		}},
 		{Text: "magenta", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorMagenta,
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#ff00ff"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorMagenta,
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#ff00ff"),
+			},
 		}},
 		{Text: "cyan", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorCyan,
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#00ffff"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorCyan,
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#00ffff"),
+			},
 		}},
 		{Text: "white", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorWhite,
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#ffffff"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorWhite,
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#ffffff"),
+			},
 		}},
 		{Text: "double height", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorWhite,
-			TeletextDoubleHeight: astikit.BoolPtr(true),
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#ffffff"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorWhite,
+				TeletextDoubleHeight: astikit.BoolPtr(true),
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#ffffff"),
+			},
 		}},
 		{Text: "double width", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorWhite,
-			TeletextDoubleHeight: astikit.BoolPtr(true),
-			TeletextDoubleWidth:  astikit.BoolPtr(true),
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#ffffff"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorWhite,
+				TeletextDoubleHeight: astikit.BoolPtr(true),
+				TeletextDoubleWidth:  astikit.BoolPtr(true),
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#ffffff"),
+			},
 		}},
 		{Text: "double size", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorWhite,
-			TeletextDoubleHeight: astikit.BoolPtr(true),
-			TeletextDoubleWidth:  astikit.BoolPtr(true),
-			TeletextDoubleSize:   astikit.BoolPtr(true),
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#ffffff"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorWhite,
+				TeletextDoubleHeight: astikit.BoolPtr(true),
+				TeletextDoubleWidth:  astikit.BoolPtr(true),
+				TeletextDoubleSize:   astikit.BoolPtr(true),
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#ffffff"),
+			},
 		}},
 		{Text: "reset", InlineStyle: &StyleAttributes{
-			TeletextColor:        ColorWhite,
-			TeletextDoubleHeight: astikit.BoolPtr(false),
-			TeletextDoubleWidth:  astikit.BoolPtr(false),
-			TeletextDoubleSize:   astikit.BoolPtr(false),
-			TeletextSpacesAfter:  astikit.IntPtr(0),
-			TeletextSpacesBefore: astikit.IntPtr(0),
-			TTMLColor:            astikit.StrPtr("#ffffff"),
+			TeletextStyleAttributes: TeletextStyleAttributes{
+				TeletextColor:        ColorWhite,
+				TeletextDoubleHeight: astikit.BoolPtr(false),
+				TeletextDoubleWidth:  astikit.BoolPtr(false),
+				TeletextDoubleSize:   astikit.BoolPtr(false),
+				TeletextSpacesAfter:  astikit.IntPtr(0),
+				TeletextSpacesBefore: astikit.IntPtr(0),
+			},
+			TTMLStyleAttributes: TTMLStyleAttributes{
+				TTMLColor: astikit.StrPtr("#ffffff"),
+			},
 		}},
 	}, i.Lines[0].Items)
 }
@@ -171,7 +219,9 @@ func TestAppendTeletextLineItem(t *testing.T) {
 	appendTeletextLineItem(&l, LineItem{Text: " test  "}, nil)
 	assert.Equal(t, "test", l.Items[0].Text)
 	assert.Equal(t, StyleAttributes{
-		TeletextSpacesAfter:  astikit.IntPtr(2),
-		TeletextSpacesBefore: astikit.IntPtr(1),
+		TeletextStyleAttributes: TeletextStyleAttributes{
+			TeletextSpacesAfter:  astikit.IntPtr(2),
+			TeletextSpacesBefore: astikit.IntPtr(1),
+		},
 	}, *l.Items[0].InlineStyle)
 }

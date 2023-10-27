@@ -173,79 +173,11 @@ var (
 
 // StyleAttributes represents style attributes
 type StyleAttributes struct {
-	SSAAlignment         *int
-	SSAAlphaLevel        *float64
-	SSAAngle             *float64 // degrees
-	SSABackColour        *Color
-	SSABold              *bool
-	SSABorderStyle       *int
-	SSAEffect            string
-	SSAEncoding          *int
-	SSAFontName          string
-	SSAFontSize          *float64
-	SSAItalic            *bool
-	SSALayer             *int
-	SSAMarginLeft        *int // pixels
-	SSAMarginRight       *int // pixels
-	SSAMarginVertical    *int // pixels
-	SSAMarked            *bool
-	SSAOutline           *float64 // pixels
-	SSAOutlineColour     *Color
-	SSAPrimaryColour     *Color
-	SSAScaleX            *float64 // %
-	SSAScaleY            *float64 // %
-	SSASecondaryColour   *Color
-	SSAShadow            *float64 // pixels
-	SSASpacing           *float64 // pixels
-	SSAStrikeout         *bool
-	SSAUnderline         *bool
-	STLBoxing            *bool
-	STLItalics           *bool
-	STLJustification     *Justification
-	STLPosition          *STLPosition
-	STLUnderline         *bool
-	TeletextColor        *Color
-	TeletextDoubleHeight *bool
-	TeletextDoubleSize   *bool
-	TeletextDoubleWidth  *bool
-	TeletextSpacesAfter  *int
-	TeletextSpacesBefore *int
-	// TODO Use pointers with real types below
-	TTMLBackgroundColor  *string // https://htmlcolorcodes.com/fr/
-	TTMLColor            *string
-	TTMLDirection        *string
-	TTMLDisplay          *string
-	TTMLDisplayAlign     *string
-	TTMLExtent           *string
-	TTMLFontFamily       *string
-	TTMLFontSize         *string
-	TTMLFontStyle        *string
-	TTMLFontWeight       *string
-	TTMLLineHeight       *string
-	TTMLOpacity          *string
-	TTMLOrigin           *string
-	TTMLOverflow         *string
-	TTMLPadding          *string
-	TTMLShowBackground   *string
-	TTMLTextAlign        *string
-	TTMLTextDecoration   *string
-	TTMLTextOutline      *string
-	TTMLUnicodeBidi      *string
-	TTMLVisibility       *string
-	TTMLWrapOption       *string
-	TTMLWritingMode      *string
-	TTMLZIndex           *int
-	WebVTTAlign          string
-	WebVTTItalics        bool
-	WebVTTLine           string
-	WebVTTLines          int
-	WebVTTPosition       string
-	WebVTTRegionAnchor   string
-	WebVTTScroll         string
-	WebVTTSize           string
-	WebVTTVertical       string
-	WebVTTViewportAnchor string
-	WebVTTWidth          string
+	SSAStyleAttributes
+	STLStyleAttributes
+	TeletextStyleAttributes
+	TTMLStyleAttributes
+	WebVTTStyleAttributes
 }
 
 func (sa *StyleAttributes) propagateSSAAttributes() {}
@@ -769,9 +701,9 @@ func formatDuration(i time.Duration, millisecondSep string, numberOfMillisecondD
 	// Parse hours
 	var hours = int(i / time.Hour)
 	var n = i % time.Hour
-	if hours < 10 {
+	/*if hours < 10 {
 		s += "0"
-	}
+	}*/
 	s += strconv.Itoa(hours) + ":"
 
 	// Parse minutes

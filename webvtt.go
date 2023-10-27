@@ -17,6 +17,20 @@ import (
 
 // https://www.w3.org/TR/webvtt1/
 
+type WebVTTStyleAttributes struct {
+	WebVTTAlign          string
+	WebVTTItalics        bool
+	WebVTTLine           string
+	WebVTTLines          int
+	WebVTTPosition       string
+	WebVTTRegionAnchor   string
+	WebVTTScroll         string
+	WebVTTSize           string
+	WebVTTVertical       string
+	WebVTTViewportAnchor string
+	WebVTTWidth          string
+}
+
 // Constants
 const (
 	webvttBlockNameComment        = "comment"
@@ -327,7 +341,9 @@ func parseTextWebVTT(i string) (o Line) {
 				var sa *StyleAttributes
 				if italic {
 					sa = &StyleAttributes{
-						WebVTTItalics: italic,
+						WebVTTStyleAttributes: WebVTTStyleAttributes{
+							WebVTTItalics: italic,
+						},
 					}
 					sa.propagateWebVTTAttributes()
 				}

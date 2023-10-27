@@ -18,6 +18,14 @@ import (
 // https://tech.ebu.ch/docs/tech/tech3264.pdf
 // https://github.com/yanncoupin/stl2srt/blob/master/to_srt.py
 
+type STLStyleAttributes struct {
+	STLBoxing        *bool
+	STLItalics       *bool
+	STLJustification *Justification
+	STLPosition      *STLPosition
+	STLUnderline     *bool
+}
+
 // STL block sizes
 const (
 	stlBlockSizeGSI = 1024
@@ -159,7 +167,7 @@ var stlLanguageMapping = astikit.NewBiMap().
 	Set(stllanguageCodeJapanese, LanguageJapanese).
 	Set(stlLanguageCodeNorwegian, LanguageNorwegian)
 
-	// STL timecode status
+// STL timecode status
 const (
 	stlTimecodeStatusNotIntendedForUse = "0"
 	stlTimecodeStatusIntendedForUse    = "1"
@@ -265,8 +273,10 @@ func ReadFromSTL(i io.Reader, opts STLOptions) (o *Subtitles, err error) {
 		}
 
 		styleAttributes := StyleAttributes{
-			STLJustification: &justification,
-			STLPosition:      &position,
+			STLStyleAttributes: STLStyleAttributes{
+				STLJustification: &justification,
+				STLPosition:      &position,
+			},
 		}
 		styleAttributes.propagateSTLAttributes()
 

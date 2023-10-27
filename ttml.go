@@ -17,6 +17,33 @@ import (
 // http://www.skynav.com:8080/ttv/check
 // https://www.speechpad.com/captions/ttml
 
+type TTMLStyleAttributes struct {
+	TTMLBackgroundColor *string // https://htmlcolorcodes.com/fr/
+	TTMLColor           *string
+	TTMLDirection       *string
+	TTMLDisplay         *string
+	TTMLDisplayAlign    *string
+	TTMLExtent          *string
+	TTMLFontFamily      *string
+	TTMLFontSize        *string
+	TTMLFontStyle       *string
+	TTMLFontWeight      *string
+	TTMLLineHeight      *string
+	TTMLOpacity         *string
+	TTMLOrigin          *string
+	TTMLOverflow        *string
+	TTMLPadding         *string
+	TTMLShowBackground  *string
+	TTMLTextAlign       *string
+	TTMLTextDecoration  *string
+	TTMLTextOutline     *string
+	TTMLUnicodeBidi     *string
+	TTMLVisibility      *string
+	TTMLWrapOption      *string
+	TTMLWritingMode     *string
+	TTMLZIndex          *int
+}
+
 // TTML languages
 const (
 	ttmlLanguageChinese   = "zh"
@@ -103,30 +130,32 @@ type TTMLInStyleAttributes struct {
 // StyleAttributes converts TTMLInStyleAttributes into a StyleAttributes
 func (s TTMLInStyleAttributes) styleAttributes() (o *StyleAttributes) {
 	o = &StyleAttributes{
-		TTMLBackgroundColor: s.BackgroundColor,
-		TTMLColor:           s.Color,
-		TTMLDirection:       s.Direction,
-		TTMLDisplay:         s.Display,
-		TTMLDisplayAlign:    s.DisplayAlign,
-		TTMLExtent:          s.Extent,
-		TTMLFontFamily:      s.FontFamily,
-		TTMLFontSize:        s.FontSize,
-		TTMLFontStyle:       s.FontStyle,
-		TTMLFontWeight:      s.FontWeight,
-		TTMLLineHeight:      s.LineHeight,
-		TTMLOpacity:         s.Opacity,
-		TTMLOrigin:          s.Origin,
-		TTMLOverflow:        s.Overflow,
-		TTMLPadding:         s.Padding,
-		TTMLShowBackground:  s.ShowBackground,
-		TTMLTextAlign:       s.TextAlign,
-		TTMLTextDecoration:  s.TextDecoration,
-		TTMLTextOutline:     s.TextOutline,
-		TTMLUnicodeBidi:     s.UnicodeBidi,
-		TTMLVisibility:      s.Visibility,
-		TTMLWrapOption:      s.WrapOption,
-		TTMLWritingMode:     s.WritingMode,
-		TTMLZIndex:          s.ZIndex,
+		TTMLStyleAttributes: TTMLStyleAttributes{
+			TTMLBackgroundColor: s.BackgroundColor,
+			TTMLColor:           s.Color,
+			TTMLDirection:       s.Direction,
+			TTMLDisplay:         s.Display,
+			TTMLDisplayAlign:    s.DisplayAlign,
+			TTMLExtent:          s.Extent,
+			TTMLFontFamily:      s.FontFamily,
+			TTMLFontSize:        s.FontSize,
+			TTMLFontStyle:       s.FontStyle,
+			TTMLFontWeight:      s.FontWeight,
+			TTMLLineHeight:      s.LineHeight,
+			TTMLOpacity:         s.Opacity,
+			TTMLOrigin:          s.Origin,
+			TTMLOverflow:        s.Overflow,
+			TTMLPadding:         s.Padding,
+			TTMLShowBackground:  s.ShowBackground,
+			TTMLTextAlign:       s.TextAlign,
+			TTMLTextDecoration:  s.TextDecoration,
+			TTMLTextOutline:     s.TextOutline,
+			TTMLUnicodeBidi:     s.UnicodeBidi,
+			TTMLVisibility:      s.Visibility,
+			TTMLWrapOption:      s.WrapOption,
+			TTMLWritingMode:     s.WritingMode,
+			TTMLZIndex:          s.ZIndex,
+		},
 	}
 	o.propagateTTMLAttributes()
 	return
